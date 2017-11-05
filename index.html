@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="index.css">
+</head>
+<body>
+	<div id="wrap">
+		<div id="box">
+			<span>可以将图片拖放到这里！！</span>
+			<p>共0张图片</p>
+		</div>
+		<div id="bin">回收站</div>
+	</div>
+<script>
+var oBox=document.getElementById('box');
+var oSpan=oBox.getElementsByTagName('span')[0];
+var oP=oBox.getElementsByTagName('p');
+var aImgs=document.getElementsByTagName('img');
+var img='';
+var oBin=document.getElementById('bin');
+oBox.addEventListener('dragenter', drag, false);
+oBox.addEventListener('dragover', drag, false);
+oBox.addEventListener('drop', drag, false);
+function drag(ev){
+    ev.preventDefault();
+    switch(ev.type){
+    	case 'dragenter':
+    	    oSpan.style.display="none";
+    	    break;
+    	case 'drop':
+    	    var imgFiles=ev.dataTransfer.files;
+    	    for(var i=0;i<imgFiles.length;i++){
+    	    	if(imgFiles[i].type.indexOf('image')!=-1){
+    	    		var imgRead=new FileReader();
+    	    		imgRead.readAsDataURL(imgFiles[i]);
+    	    		imgRead.onload=function(){
+    	    			var aImg=new Image();
+    	    			aImg.src=this.result;
+    	    			oBox.appendChild(aImg);
+    	    			if(aImgs){
+    	    				for(var j=0;j<aImgs.length;j++){
+    	    					aImgs[j].ondragstart=function(ev){
+    	    						img=ev.target;
+    	    					}
+    	    				}
+    	    			}
+    	    			oBin.ondragover=function(ev){
+    	    				ev.preventDefault();
+    	    			};
+    	    			oBin.ondrop=function(ev){
+    	    				ev.preventDefault();
+    	    				if(img){
+    	    					img.parentNode.removeChild(img);
+    	    				}
+    	    			}
+    	    		}
+    	    	}else{
+    	    		alert('请插入图片');
+    	    	}
+    	    }
+    	    break;
+    }
+}
+</script>
+</body>
+</html>
